@@ -65,8 +65,7 @@ class BlogController
             "blog/index.html.twig",
             [
                 'posts' => $this->session->get('posts')
-            ]
-            );
+            ]);
 
         return new Response($html);
     }
