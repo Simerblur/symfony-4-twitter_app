@@ -108,7 +108,7 @@ class MicroPostController
     /**
      * @Route("/delete/{id}", name="micro_post_delete")
      */
-    public function delete(MicroPost $microPost)
+    public function delete(MicroPost $microPost, Request $request)
     {
         $this->entityManager->remove($microPost);
         $this->entityManager->flush();
