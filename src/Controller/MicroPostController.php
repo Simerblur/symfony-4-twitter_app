@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * @Route("\micro-post")
+ * @Route("/micro-post")
  */
 class MicroPostController
 {
@@ -92,6 +92,22 @@ class MicroPostController
             $this->twig->render(
                 'micro-post/add.html.twig',
                 ['form' => $form->createView()]
+            )
+        );
+    }
+
+    /**
+     * @Route("/{id}", name="micro_post_post")
+     */
+    public function post(MicroPost $post)
+    {
+
+        return new Response(
+            $this->twig->render(
+                'micro-post/add.html.twig',
+                [
+                    'post' => $post
+                ]
             )
         );
     }
