@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -45,11 +46,15 @@ class MicroPostController
      * @var RouterInterface
      */
     private $router;
+    /**
+     * @var FlashBagInterface
+     */
+    private $flashBag;
 
     public function __construct(
         \Twig_Environment $twig, MicroPostRepository $microPostRepository,
         FormFactoryInterface $formFactory, EntityManagerInterface $entityManager,
-        RouterInterface $router
+        RouterInterface $router, FlashBagInterface $flashBag
     )
     {
         $this->twig = $twig;
@@ -57,6 +62,7 @@ class MicroPostController
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->router = $router;
+        $this->flashBag = $flashBag;
     }
 
     /**
@@ -64,10 +70,52 @@ class MicroPostController
      */
     public function index()
     {
-        $html = $this->twig->render('micro-post/index.html.twig', [
-            'posts' => $this->microPostRepository->findAll()
-        ]);
+        $html = $this->twig->render('micro-post/index.html.twig',
+            [
+                'posts' => $this->microPostRepository->findBy([], ['time' => 'DESC']),
+            ]
+        );
         return new Response($html);
+    }
+
+    /**
+     * @Route("/edit/{id}", name="micro_post_edit")
+     */
+    public function edit(MicroPost $microPost, Request $request)
+    {
+        $form = $this->formFactory->create(MicroPostType::class, $microPost);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($microPost);
+            $this->entityManager->flush();
+
+            return new  RedirectResponse($this->router->generate('micro-post-index'));
+        }
+        try {
+            return new Response(
+                $this->twig->render(
+                    'micro-post/add.html.twig',
+                    ['form' => $form->createView()]
+                )
+            );
+        } catch (\Twig_Error_Loader $e) {
+        } catch (\Twig_Error_Runtime $e) {
+        } catch (\Twig_Error_Syntax $e) {
+        }
+    }
+
+    /**
+     * @Route("/delete/{id}", name="micro_post_delete")
+     */
+    public function delete(MicroPost $microPost)
+    {
+        $this->entityManager->remove($microPost);
+        $this->entityManager->flush();
+
+        $this->flashBag->add('notice', 'Micro post was deleted');
+
+        return new  RedirectResponse($this->router->generate('micro-post-index'));
     }
 
     /**
@@ -87,13 +135,17 @@ class MicroPostController
 
             return new  RedirectResponse($this->router->generate('micro-post-index'));
         }
-
-        return new Response(
-            $this->twig->render(
-                'micro-post/add.html.twig',
-                ['form' => $form->createView()]
-            )
-        );
+        try {
+            return new Response(
+                $this->twig->render(
+                    'micro-post/add.html.twig',
+                    ['form' => $form->createView()]
+                )
+            );
+        } catch (\Twig_Error_Loader $e) {
+        } catch (\Twig_Error_Runtime $e) {
+        } catch (\Twig_Error_Syntax $e) {
+        }
     }
 
     /**
@@ -102,13 +154,18 @@ class MicroPostController
     public function post(MicroPost $post)
     {
 
-        return new Response(
-            $this->twig->render(
-                'micro-post/add.html.twig',
-                [
-                    'post' => $post
-                ]
-            )
-        );
+        try {
+            return new Response(
+                $this->twig->render(
+                    'micro-post/post.html.twig',
+                    [
+                        'post' => $post
+                    ]
+                )
+            );
+        } catch (\Twig_Error_Loader $e) {
+        } catch (\Twig_Error_Runtime $e) {
+        } catch (\Twig_Error_Syntax $e) {
+        }
     }
 }
