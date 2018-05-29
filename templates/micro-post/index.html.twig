@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% for in app.flashes('notice') %}
+    {% for message in app.flashes('notice') %}
         <div class="alert alert-success">
             {{ message }}
         </div>
@@ -21,5 +21,6 @@
             <a href="{{ path('micro_post_edit', {'id': post.id}) }}">Edit </a>
             <a href="{{ path('micro_post_delete', {'id': post.id}) }}">Delete </a>
         </small>
+
     {% endfor %}
 {% endblock %}

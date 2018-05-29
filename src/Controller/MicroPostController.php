@@ -92,17 +92,13 @@ class MicroPostController
 
             return new  RedirectResponse($this->router->generate('micro-post-index'));
         }
-        try {
-            return new Response(
-                $this->twig->render(
-                    'micro-post/add.html.twig',
-                    ['form' => $form->createView()]
-                )
-            );
-        } catch (\Twig_Error_Loader $e) {
-        } catch (\Twig_Error_Runtime $e) {
-        } catch (\Twig_Error_Syntax $e) {
-        }
+
+        return new Response(
+            $this->twig->render(
+                'micro-post/add.html.twig',
+                ['form' => $form->createView()]
+            )
+        );
     }
 
     /**
@@ -135,17 +131,13 @@ class MicroPostController
 
             return new  RedirectResponse($this->router->generate('micro-post-index'));
         }
-        try {
-            return new Response(
-                $this->twig->render(
-                    'micro-post/add.html.twig',
-                    ['form' => $form->createView()]
-                )
-            );
-        } catch (\Twig_Error_Loader $e) {
-        } catch (\Twig_Error_Runtime $e) {
-        } catch (\Twig_Error_Syntax $e) {
-        }
+
+        return new Response(
+            $this->twig->render(
+                'micro-post/add.html.twig',
+                ['form' => $form->createView()]
+            )
+        );
     }
 
     /**
@@ -154,18 +146,14 @@ class MicroPostController
     public function post(MicroPost $post)
     {
 
-        try {
-            return new Response(
-                $this->twig->render(
-                    'micro-post/post.html.twig',
-                    [
-                        'post' => $post
-                    ]
-                )
-            );
-        } catch (\Twig_Error_Loader $e) {
-        } catch (\Twig_Error_Runtime $e) {
-        } catch (\Twig_Error_Syntax $e) {
-        }
+
+        return new Response(
+            $this->twig->render(
+                'micro-post/post.html.twig',
+                [
+                    'post' => $post
+                ]
+            )
+        );
     }
 }
